@@ -1,0 +1,46 @@
+{
+  "name": "web",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "prisma generate && next build",
+    "start": "next start"
+  },
+  "prisma": {
+    "schema": "../api/prisma/schema.prisma"
+  },
+  "dependencies": {
+    "@auth/prisma-adapter": "^2.7.4",
+    "@gsap/react": "^2.1.1",
+    "@prisma/client": "^6.2.1",
+    "@react-pdf/renderer": "^3.4.4",
+    "@tanstack/react-query": "^5.62.7",
+    "bcryptjs": "^2.4.3",
+    "canvas-confetti": "^1.9.3",
+    "clsx": "^2.1.1",
+    "gsap": "^3.12.5",
+    "jose": "^5.10.0",
+    "locomotive-scroll": "^4.1.4",
+    "lucide-react": "^0.368.0",
+    "next": "15.0.3",
+    "next-auth": "^5.0.0-beta.25",
+    "react": "^19.0.0-rc-66a30de9-20241107",
+    "react-dom": "^19.0.0-rc-66a30de9-20241107",
+    "react-markdown": "^9.0.1",
+    "tailwind-merge": "^2.2.2",
+    "zustand": "^4.5.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.0-alpha.12",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/canvas-confetti": "^1.6.4",
+    "@types/node": "^20.12.7",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "postcss": "^8.4.38",
+    "prisma": "^6.2.1",
+    "tailwindcss": "^4.0.0-alpha.12",
+    "typescript": "^5.4.5"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "cognita-monorepo",
+  "private": true,
+  "packageManager": "bun@1.3.4",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "start": "turbo run start"
+  },
+  "devDependencies": {
+    "playwright": "^1.60.0",
+    "turbo": "^2.0.4"
+  },
+  "overrides": {
+    "ioredis": "5.10.1",
+    "bullmq": "5.78.0"
+  },
+  "trustedDependencies": [
+    "@prisma/client",
+    "prisma",
+    "esbuild",
+    "onnxruntime-node",
+    "protobufjs",
+    "@tailwindcss/oxide"
+  ]
+}
