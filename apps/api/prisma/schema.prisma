@@ -1,0 +1,296 @@
+// Cognita — Prisma schema (Postgres)
+// Shared by the Express API and the Next.js Auth.js app.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  TEACHER
+}
+
+enum DocumentStatus {
+  PROCESSING
+  READY
+  FAILED
+}
+
+enum JobStatus {
+  PENDING
+  GENERATING
+  COMPLETE
+  FAILED
+}
+
+enum StudyArtifactType {
+  SUMMARY
+  FLASHCARDS
+}
+
+// ─── Users & Auth.js adapter ───────────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  passwordHash  String?
+  emailVerified DateTime?
+  image         String?
+  role          Role      @default(STUDENT)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts            Account[]
+  sessions            Session[]
+  documents           Document[]
+  assignments         Assignment[]
+  submissions              Submission[]
+  chatSessions             ChatSession[]
+  studyArtifacts           StudyArtifact[]
+  roadmaps                 Roadmap[]
+  roadmapEnrollments       RoadmapEnrollment[]
+  assessmentEnrollments    AssessmentEnrollment[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─── Documents (RAG sources) ───────────────────────────────────────────────────
+
+model Document {
+  id         String         @id @default(cuid())
+  ownerId    String
+  owner      User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  filename   String
+  mimeType   String?
+  status     DocumentStatus @default(PROCESSING)
+  chunkCount Int            @default(0)
+  collection String? // qdrant collection name
+  error      String?
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  chatSessions   ChatSession[]
+  assignments    Assignment[]
+  studyArtifacts StudyArtifact[]
+
+  @@index([ownerId])
+}
+
+// ─── Assessment creation ───────────────────────────────────────────────────────
+
+model Assignment {
+  id                     String    @id @default(cuid())
+  ownerId                String
+  owner                  User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  createdByRole          Role
+  title                  String
+  subject                String
+  topic                  String
+  gradeLevel             String
+  dueDate                String
+  totalMarks             Int
+  additionalInstructions String    @default("")
+  sections               Json // SectionConfig[]
+  documentId             String?
+  document               Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  status                 JobStatus @default(PENDING)
+  jobId                  String?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  assessment Assessment?
+
+  @@index([ownerId])
+}
+
+model Assessment {
+  id                  String     @id @default(cuid())
+  assignmentId        String     @unique
+  assignment          Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  title               String
+  subject             String
+  topic               String
+  gradeLevel          String
+  dueDate             String
+  totalMarks          Int
+  duration            String?
+  generalInstructions String[]
+  sections            Json // AssessmentSection[] (includes answers)
+  status              JobStatus  @default(PENDING)
+  generatedAt         String?
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+
+  submissions Submission[]
+  enrollments AssessmentEnrollment[]
+}
+
+// ─── Student submissions & grading ─────────────────────────────────────────────
+
+model Submission {
+  id           String     @id @default(cuid())
+  assessmentId String
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  studentId    String
+  student      User       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  answers      Json // { [questionId]: string }
+  totalScore   Float?
+  maxScore     Float?
+  status       String     @default("submitted") // submitted | grading | graded | failed
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  grades Grade[]
+
+  @@index([studentId])
+  @@index([assessmentId])
+}
+
+model Grade {
+  id           String     @id @default(cuid())
+  submissionId String
+  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  questionId   String
+  score        Float
+  maxScore     Float
+  feedback     String?
+  correct      Boolean?
+}
+
+// ─── Tutor chat (chat-with-PDF) ────────────────────────────────────────────────
+
+model ChatSession {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documentId String
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  title      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  messages ChatMessage[]
+
+  @@index([userId])
+}
+
+model ChatMessage {
+  id        String      @id @default(cuid())
+  sessionId String
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  role      String // user | assistant
+  content   String
+  sources   Json? // citations: [{ chunkIndex, snippet }]
+  createdAt DateTime    @default(now())
+
+  @@index([sessionId])
+}
+
+// ─── Study artifacts (summaries / flashcards) ──────────────────────────────────
+
+model StudyArtifact {
+  id         String            @id @default(cuid())
+  userId     String
+  user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documentId String
+  document   Document          @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  type       StudyArtifactType
+  content    Json
+  createdAt  DateTime          @default(now())
+
+  @@index([userId])
+}
+
+// ─── Roadmaps ──────────────────────────────────────────────────────────────────
+
+model Roadmap {
+  id             String     @id @default(cuid())
+  ownerId        String
+  owner          User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  title          String
+  topic          String
+  targetAudience String?
+  durationWeeks  Int?
+  phases         Json       // RoadmapPhase[]
+  status         JobStatus  @default(PENDING)
+  jobId          String?
+  generatedAt    String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  enrollments RoadmapEnrollment[]
+
+  @@index([ownerId])
+}
+
+model RoadmapEnrollment {
+  id                 String   @id @default(cuid())
+  roadmapId          String
+  roadmap            Roadmap  @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+  studentId          String
+  student            User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  status             String   @default("PENDING") // PENDING | APPROVED | REJECTED
+  completedTasks     String[]
+  completedResources String[]
+  notes              Json     // { milestoneId: string; note: string }[]
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@unique([roadmapId, studentId])
+  @@index([studentId])
+}
+
+// ─── Assessment enrollments ────────────────────────────────────────────────
+
+model AssessmentEnrollment {
+  id              String     @id @default(cuid())
+  assessmentId    String
+  assessment      Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  studentId       String
+  student         User       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  status          String     @default("PENDING") // PENDING | APPROVED | REJECTED
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  @@unique([assessmentId, studentId])
+  @@index([studentId])
+}
