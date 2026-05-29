@@ -1,0 +1,349 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+@import "locomotive-scroll/dist/locomotive-scroll.css";
+
+/* ─── Design Tokens ─────────────────────────────────────────────────────────── */
+@theme {
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Outfit', sans-serif;
+
+  /* Brand: violet spectrum */
+  --color-brand-50:  #f3f0ff;
+  --color-brand-100: #ede9fe;
+  --color-brand-200: #ddd6fe;
+  --color-brand-300: #c4b5fd;
+  --color-brand-400: #a78bfa;
+  --color-brand-500: #8b5cf6;
+  --color-brand-600: #7c3aed;
+  --color-brand-700: #6d28d9;
+  --color-brand-800: #5b21b6;
+  --color-brand-900: #4c1d95;
+
+  /* Cyan accent */
+  --color-neon-400: #22d3ee;
+  --color-neon-500: #06b6d4;
+  --color-neon-600: #0891b2;
+
+  /* XP gold */
+  --color-xp-400: #fbbf24;
+  --color-xp-500: #f59e0b;
+
+  /* Status */
+  --color-ink-900: #070810;
+  --color-ink-800: #0c0e1a;
+  --color-ink-700: #111327;
+}
+
+/* ─── Theme CSS Variables ────────────────────────────────────────────────────── */
+/* Dark (default) */
+:root {
+  --bg:           #07080f;
+  --surface:      #0c0e1a;
+  --card:         #111327;
+  --card-hi:      #181b30;
+  --border:       rgba(255,255,255,0.06);
+  --border-md:    rgba(255,255,255,0.10);
+  --border-hi:    rgba(255,255,255,0.15);
+  --glow-brand:   rgba(139,92,246,0.20);
+  --glow-cyan:    rgba(34,211,238,0.15);
+  --text:         #dde1f0;
+  --text-2:       #8892aa;
+  --text-3:       #4a556b;
+  --input-bg:     rgba(255,255,255,0.04);
+  --scrollbar:    rgba(255,255,255,0.12);
+  --shadow:       0 4px 32px rgba(0,0,0,0.6);
+  --shadow-brand: 0 4px 24px rgba(139,92,246,0.30);
+  --shadow-lg:    0 8px 48px rgba(0,0,0,0.8);
+}
+
+/* Light override */
+html.light {
+  --bg:           #f3f4fa;
+  --surface:      #ffffff;
+  --card:         #ffffff;
+  --card-hi:      #eef0f8;
+  --border:       rgba(0,0,0,0.07);
+  --border-md:    rgba(0,0,0,0.10);
+  --border-hi:    rgba(0,0,0,0.15);
+  --glow-brand:   rgba(124,58,237,0.10);
+  --glow-cyan:    rgba(6,182,212,0.10);
+  --text:         #0f1117;
+  --text-2:       #6b7280;
+  --text-3:       #9ca3af;
+  --input-bg:     rgba(0,0,0,0.03);
+  --scrollbar:    rgba(0,0,0,0.15);
+  --shadow:       0 4px 24px rgba(0,0,0,0.10);
+  --shadow-brand: 0 4px 20px rgba(124,58,237,0.20);
+  --shadow-lg:    0 8px 40px rgba(0,0,0,0.12);
+}
+
+/* ─── Base ───────────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { color-scheme: dark; scroll-behavior: smooth; }
+html.light { color-scheme: light; }
+
+:root { color-scheme: dark; }
+html.light :root { color-scheme: light; }
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-display { font-family: var(--font-display); }
+
+/* ─── Animated background mesh (dark only) ────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 70% 55% at 15% -10%, rgba(139,92,246,0.18) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 45% at 85% 110%, rgba(34,211,238,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 45% 35% at 55% 55%,  rgba(139,92,246,0.06) 0%, transparent 60%);
+  animation: meshDrift 16s ease-in-out infinite alternate;
+}
+
+html.light body::before {
+  background:
+    radial-gradient(ellipse 70% 55% at 15% -10%, rgba(139,92,246,0.07) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 45% at 85% 110%, rgba(34,211,238,0.04) 0%, transparent 60%);
+  animation: none;
+}
+
+/* Dot grid overlay — dark only */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: radial-gradient(rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+html.light body::after { display: none; }
+
+/* All content above the pseudo-elements */
+body > * { position: relative; z-index: 1; }
+
+@keyframes meshDrift {
+  0%   { opacity: 0.75; transform: scale(1)      rotate(0deg); }
+  50%  { opacity: 1;    transform: scale(1.04)   rotate(0.5deg); }
+  100% { opacity: 0.85; transform: scale(0.98)   rotate(-0.3deg); }
+}
+
+/* ─── Glassmorphism utilities ────────────────────────────────────────────────── */
+.glass {
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid var(--border);
+}
+html.light .glass {
+  background: rgba(255,255,255,0.80);
+  backdrop-filter: blur(24px) saturate(160%);
+}
+
+.glass-strong {
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(40px) saturate(200%);
+  border: 1px solid var(--border-md);
+}
+html.light .glass-strong {
+  background: rgba(255,255,255,0.92);
+}
+
+/* ─── Glow helpers ───────────────────────────────────────────────────────────── */
+.glow-brand { box-shadow: 0 0 28px var(--glow-brand); }
+.glow-cyan  { box-shadow: 0 0 28px var(--glow-cyan); }
+.glow-green { box-shadow: 0 0 28px rgba(52,211,153,0.20); }
+.glow-xp    { box-shadow: 0 0 20px rgba(251,191,36,0.25); }
+
+/* ─── Text gradient ──────────────────────────────────────────────────────────── */
+.text-gradient {
+  background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 40%, #22d3ee 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.text-gradient-gold {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 60%, #fcd34d 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ─── Animations ─────────────────────────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.90); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes floaty {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-12px); }
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 12px var(--glow-brand); }
+  50%       { box-shadow: 0 0 32px var(--glow-brand), 0 0 60px rgba(139,92,246,0.10); }
+}
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-6deg); }
+  50%       { transform: rotate(6deg); }
+}
+@keyframes xpFloat {
+  0%   { opacity: 1; transform: translateY(0) scale(1); }
+  80%  { opacity: 1; transform: translateY(-48px) scale(1.1); }
+  100% { opacity: 0; transform: translateY(-64px) scale(0.9); }
+}
+@keyframes cardSwipeLeft {
+  to { transform: translateX(-120%) rotate(-18deg); opacity: 0; }
+}
+@keyframes cardSwipeRight {
+  to { transform: translateX(120%) rotate(18deg); opacity: 0; }
+}
+@keyframes streakPop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+.animate-fadeIn      { animation: fadeIn 0.35s cubic-bezier(0.16,1,0.3,1) forwards; }
+.animate-slideUp     { animation: slideUp 0.45s cubic-bezier(0.16,1,0.3,1) forwards; }
+.animate-slideDown   { animation: slideDown 0.45s cubic-bezier(0.16,1,0.3,1) forwards; }
+.animate-slideInRight { animation: slideInRight 0.4s cubic-bezier(0.16,1,0.3,1) forwards; }
+.animate-scaleIn     { animation: scaleIn 0.3s cubic-bezier(0.16,1,0.3,1) forwards; }
+.animate-floaty      { animation: floaty 6s ease-in-out infinite; }
+.animate-pulse-glow  { animation: pulse-glow 2.5s ease-in-out infinite; }
+.animate-wiggle      { animation: wiggle 0.5s ease-in-out 2; }
+.animate-xpFloat     { animation: xpFloat 1s ease-out forwards; }
+.animate-streakPop   { animation: streakPop 0.4s cubic-bezier(0.16,1,0.3,1) forwards; }
+.animate-swipeLeft   { animation: cardSwipeLeft 0.45s cubic-bezier(0.4,0,1,1) forwards; }
+.animate-swipeRight  { animation: cardSwipeRight 0.45s cubic-bezier(0.4,0,1,1) forwards; }
+
+/* ─── 3D Flip Card ───────────────────────────────────────────────────────────── */
+.flip-card            { perspective: 1400px; }
+.flip-inner {
+  position: relative;
+  width: 100%; height: 100%;
+  transition: transform 0.55s cubic-bezier(0.16,1,0.3,1);
+  transform-style: preserve-3d;
+}
+.flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+.flip-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.flip-back { transform: rotateY(180deg); }
+
+/* ─── Skeleton ───────────────────────────────────────────────────────────────── */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--card-hi);
+  border-radius: 0.75rem;
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+  animation: shimmer 1.6s infinite;
+}
+
+/* ─── Scrollbars ─────────────────────────────────────────────────────────────── */
+.scrollbar-thin::-webkit-scrollbar              { width: 5px; height: 5px; }
+.scrollbar-thin::-webkit-scrollbar-track        { background: transparent; }
+.scrollbar-thin::-webkit-scrollbar-thumb        { background: var(--scrollbar); border-radius: 999px; }
+.scrollbar-thin::-webkit-scrollbar-thumb:hover  { background: var(--border-hi); }
+
+/* ─── Native select / option dark theme ──────────────────────────────────────── */
+select {
+  color-scheme: dark;
+}
+select option {
+  color-scheme: dark;
+  background-color: #111327;
+  color: #dde1f0;
+}
+html.light select {
+  color-scheme: light;
+}
+html.light select option {
+  color-scheme: light;
+  background-color: #ffffff;
+  color: #0f1117;
+}
+
+/* ─── Locomotive Scroll ──────────────────────────────────────────────────────── */
+html.has-scroll-smooth            { overflow: hidden; }
+html.has-scroll-dragging          { -webkit-user-select: none; user-select: none; }
+.has-scroll-smooth body           { overflow: hidden; }
+[data-scroll-container]           { min-height: 100vh; }
+
+/* ─── XP badge animation ─────────────────────────────────────────────────────── */
+.xp-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: #fbbf24;
+  text-shadow: 0 0 12px rgba(251,191,36,0.5);
+  white-space: nowrap;
+}
+
+/* ─── Progress bar ───────────────────────────────────────────────────────────── */
+.xp-bar {
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--card-hi);
+  overflow: hidden;
+}
+.xp-bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #8b5cf6 0%, #22d3ee 100%);
+  transition: width 0.6s cubic-bezier(0.16,1,0.3,1);
+  box-shadow: 0 0 12px rgba(34,211,238,0.4);
+}
+
+/* ─── Print ──────────────────────────────────────────────────────────────────── */
+@media print {
+  body                    { background: white !important; color: black !important; }
+  body::before,
+  body::after             { display: none !important; }
+  .print\:hidden          { display: none !important; }
+}
