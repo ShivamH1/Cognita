@@ -2,7 +2,8 @@
 // Shared by the Express API and the Next.js Auth.js app.
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
 }
 
 datasource db {

@@ -11,14 +11,14 @@ COPY apps/api/package.json ./apps/api/
 COPY apps/web/package.json ./apps/web/
 
 # Install dependencies (includes devDependencies for compilation)
-RUN bun install --frozen-lockfile
+RUN bun install
 
 # Copy the API source code
 COPY apps/api ./apps/api
 
 # Generate Prisma Client and compile TS to JS
 WORKDIR /app/apps/api
-RUN bunx prisma generate
+RUN bun run prisma generate
 RUN bun run build
 
 # Download and warm up the embedding model during build so it is baked into the image.
@@ -49,4 +49,4 @@ ENV PORT=8000
 
 # Start script: run pending Prisma migrations and start the Express server
 WORKDIR /app/apps/api
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/index.js"]
+CMD ["sh", "-c", "npx --no-install prisma migrate deploy && node dist/index.js"]

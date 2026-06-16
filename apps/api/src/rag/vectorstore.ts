@@ -7,7 +7,11 @@ import { env } from "../lib/env"
 /** All document chunks live in one collection, partitioned by metadata.documentId. */
 export const COLLECTION = "cognita_documents"
 
-export const qdrant = new QdrantClient({ url: env.QDRANT_URL, checkCompatibility: false })
+export const qdrant = new QdrantClient({
+  url: env.QDRANT_URL,
+  apiKey: env.QDRANT_API_KEY || undefined,
+  checkCompatibility: false,
+})
 
 let ensured = false
 export async function ensureCollection(): Promise<void> {
