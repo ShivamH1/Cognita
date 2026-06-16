@@ -29,6 +29,8 @@ hand-parsed the JSON — fragile, and it blew the context window on large files.
 ---
 
 ## Architecture
+<img width="1024" height="559" alt="image" src="https://github.com/user-attachments/assets/07ecfe27-23c4-434d-9c64-becb3ced07e9" />
+
 
 ```
 Next.js (Auth.js)  ──Bearer JWT──▶  Express API  ──▶  LangChain LLM Gateway ─▶ OpenRouter│Mistral│Groq
