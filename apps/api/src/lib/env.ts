@@ -11,6 +11,7 @@ const envSchema = z.object({
   DATABASE_URL: z.string().default("postgresql://cognita:cognita@localhost:5432/cognita?schema=public"),
   REDIS_URL: z.string().default("redis://localhost:6379"),
   QDRANT_URL: z.string().default("http://localhost:6333"),
+  QDRANT_API_KEY: z.string().default(""),
 
   // Embeddings (local Transformers.js)
   EMBEDDING_MODEL: z.string().default("Xenova/all-MiniLM-L6-v2"),

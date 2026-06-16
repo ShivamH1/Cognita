@@ -11,7 +11,7 @@ COPY apps/api/package.json ./apps/api/
 COPY apps/web/package.json ./apps/web/
 
 # Install dependencies (includes devDependencies for compilation)
-RUN bun install --frozen-lockfile
+RUN bun install
 
 # Copy the API source code
 COPY apps/api ./apps/api
