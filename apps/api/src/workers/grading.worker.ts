@@ -1,5 +1,5 @@
 import { Worker, Job } from "bullmq"
-import { redis } from "../lib/redis"
+import { createRedisClient } from "../lib/redis"
 import { prisma } from "../lib/db"
 import { gradeSubmission } from "../chains/grading.chain"
 import type { GradingJobData } from "../queues/grading.queue"
@@ -53,7 +53,7 @@ export const gradingWorker = new Worker<GradingJobData>(
       throw err
     }
   },
-  { connection: redis, concurrency: 3 },
+  { connection: createRedisClient(), concurrency: 3 },
 )
 
 gradingWorker.on("failed", (job, err) => {

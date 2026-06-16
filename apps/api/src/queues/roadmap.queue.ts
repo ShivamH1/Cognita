@@ -1,5 +1,5 @@
 import { Queue } from "bullmq"
-import { redis } from "../lib/redis"
+import { createRedisClient } from "../lib/redis"
 import type { RoadmapInput } from "../types/index"
 
 export interface RoadmapJobData {
@@ -8,7 +8,7 @@ export interface RoadmapJobData {
 }
 
 export const roadmapQueue = new Queue<RoadmapJobData>("roadmap-generation", {
-  connection: redis,
+  connection: createRedisClient(),
   defaultJobOptions: {
     attempts: 2,
     backoff: { type: "exponential", delay: 3000 },

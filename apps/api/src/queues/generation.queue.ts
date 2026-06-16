@@ -1,5 +1,5 @@
 import { Queue } from "bullmq"
-import { redis } from "../lib/redis"
+import { createRedisClient } from "../lib/redis"
 import type { AssignmentInput } from "../types/index"
 
 export interface GenerationJobData {
@@ -8,7 +8,7 @@ export interface GenerationJobData {
 }
 
 export const generationQueue = new Queue<GenerationJobData>("assessment-generation", {
-  connection: redis,
+  connection: createRedisClient(),
   defaultJobOptions: {
     attempts: 2,
     backoff: { type: "exponential", delay: 3000 },

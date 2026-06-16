@@ -1,5 +1,5 @@
 import { Worker, Job } from "bullmq"
-import { redis } from "../lib/redis"
+import { createRedisClient } from "../lib/redis"
 import { prisma } from "../lib/db"
 import { generateRoadmap } from "../chains/roadmap.chain"
 import { wsService } from "../services/websocket.service"
@@ -65,7 +65,7 @@ export const roadmapWorker = new Worker<RoadmapJobData>(
       throw err
     }
   },
-  { connection: redis, concurrency: 2 },
+  { connection: createRedisClient(), concurrency: 2 },
 )
 
 roadmapWorker.on("failed", (job, err) => {

@@ -1,5 +1,5 @@
 import { Worker, Job } from "bullmq"
-import { redis } from "../lib/redis"
+import { createRedisClient } from "../lib/redis"
 import { prisma } from "../lib/db"
 import { generateAssessment } from "../chains/assessment.chain"
 import { wsService } from "../services/websocket.service"
@@ -97,7 +97,7 @@ export const generationWorker = new Worker<GenerationJobData>(
       throw err
     }
   },
-  { connection: redis, concurrency: 3 },
+  { connection: createRedisClient(), concurrency: 3 },
 )
 
 generationWorker.on("failed", (job, err) => {

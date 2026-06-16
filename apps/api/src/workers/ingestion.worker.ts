@@ -1,5 +1,5 @@
 import { Worker, Job } from "bullmq"
-import { redis } from "../lib/redis"
+import { createRedisClient } from "../lib/redis"
 import { prisma } from "../lib/db"
 import { ingestDocument } from "../rag/ingest"
 import { COLLECTION } from "../rag/vectorstore"
@@ -25,7 +25,7 @@ export const ingestionWorker = new Worker<IngestionJobData>(
       throw err
     }
   },
-  { connection: redis, concurrency: 2 },
+  { connection: createRedisClient(), concurrency: 2 },
 )
 
 ingestionWorker.on("failed", (job, err) => {

@@ -1,5 +1,5 @@
 import { Queue } from "bullmq"
-import { redis } from "../lib/redis"
+import { createRedisClient } from "../lib/redis"
 
 export interface IngestionJobData {
   documentId: string
@@ -10,7 +10,7 @@ export interface IngestionJobData {
 }
 
 export const ingestionQueue = new Queue<IngestionJobData>("document-ingestion", {
-  connection: redis,
+  connection: createRedisClient(),
   defaultJobOptions: {
     attempts: 2,
     backoff: { type: "exponential", delay: 3000 },
