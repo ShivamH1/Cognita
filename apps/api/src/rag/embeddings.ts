@@ -38,7 +38,7 @@ export class LocalEmbeddings extends Embeddings {
     if (texts.length === 0) return []
     const model = await getModel()
     const out: number[][] = []
-    for await (const batch of model.embed(texts, 256)) {
+    for await (const batch of model.embed(texts, 32)) {
       for (const vec of batch) out.push(toArray(vec))
     }
     return out

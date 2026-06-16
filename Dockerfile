@@ -49,4 +49,4 @@ ENV PORT=8000
 
 # Start script: run pending Prisma migrations and start the Express server
 WORKDIR /app/apps/api
-CMD ["sh", "-c", "npx --no-install prisma migrate deploy && node dist/index.js"]
+CMD ["sh", "-c", "npx --no-install prisma migrate deploy && node --max-old-space-size=400 dist/index.js"]
