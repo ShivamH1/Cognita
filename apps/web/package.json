@@ -23,7 +23,7 @@
     "jose": "^5.10.0",
     "locomotive-scroll": "^4.1.4",
     "lucide-react": "^0.368.0",
-    "next": "15.0.3",
+    "next": "15.0.7",
     "next-auth": "^5.0.0-beta.25",
     "react": "^19.0.0-rc-66a30de9-20241107",
     "react-dom": "^19.0.0-rc-66a30de9-20241107",
