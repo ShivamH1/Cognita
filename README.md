@@ -77,6 +77,48 @@ shared `AUTH_SECRET`) that the Express API verifies with `jose`; routes are guar
 
 ---
 
+## 📷 Application Walkthrough & UI Gallery
+
+Here is the visual step-by-step walkthrough of the Cognita platform:
+
+### 👩‍🏫 Teacher Workspace & Assessment Flow
+
+| **1. Landing Page (GSAP animated)** | **2. Create Assessment (Step 1)** |
+|:---:|:---:|
+| ![Landing Page](apps/web/public/screenshots/walkthrough-01-landing.png) | ![Create Step 1](apps/web/public/screenshots/walkthrough-10-create-step1-filled.png) |
+
+| **3. Configure Sections (Step 2)** | **4. Teacher Dashboard** |
+|:---:|:---:|
+| ![Configure Sections](apps/web/public/screenshots/walkthrough-11-create-step2-sections.png) | ![Teacher Dashboard](apps/web/public/screenshots/walkthrough-04-teacher-dashboard.png) |
+
+| **5. Teacher Assessment Detail** | **6. Teacher Answer Key** |
+|:---:|:---:|
+| ![Assessment Detail](apps/web/public/screenshots/walkthrough-06-teacher-assessment-detail.png) | ![Answer Key](apps/web/public/screenshots/walkthrough-07-teacher-answer-key.png) |
+
+| **7. Analytics Dashboard** | **8. Teacher Library** |
+|:---:|:---:|
+| ![Teacher Analytics](apps/web/public/screenshots/walkthrough-08-teacher-analytics.png) | ![Teacher Library](apps/web/public/screenshots/walkthrough-12-teacher-library.png) |
+
+### 🧑‍🎓 Student Workspace & Learning Flow
+
+| **9. Student Dashboard** | **10. Student Library** |
+|:---:|:---:|
+| ![Student Dashboard](apps/web/public/screenshots/walkthrough-14-student-dashboard.png) | ![Student Library](apps/web/public/screenshots/walkthrough-15-student-library.png) |
+
+| **11. AI Study Aids (Flashcards)** | **12. Student Assessments View** |
+|:---:|:---:|
+| ![Study Aids](apps/web/public/screenshots/walkthrough-16-student-study.png) | ![Student Assessments](apps/web/public/screenshots/walkthrough-17-student-assessments.png) |
+
+| **13. Graded Assessment Feedback** | **14. Detailed Scorecard Review** |
+|:---:|:---:|
+| ![Graded Assessment](apps/web/public/screenshots/walkthrough-18-student-result-graded.png) | ![Per-Question Critique](apps/web/public/screenshots/walkthrough-19-student-result-feedback.png) |
+
+| **15. Progress Tracker** |
+|:---:|
+| ![Student Progress](apps/web/public/screenshots/walkthrough-20-student-progress.png) |
+
+---
+
 ## Local setup
 
 ### 1. Prerequisites
